@@ -16,7 +16,7 @@ APP_NAME = "MarkdownViewer"
 
 def clean_build_dirs():
     """Limpiar directorios de build anteriores"""
-    print("🧹 Limpiando directorios de build...")
+    print("[*] Limpiando directorios de build...")
     for dir_name in ['build', 'dist']:
         if os.path.exists(dir_name):
             shutil.rmtree(dir_name)
@@ -24,14 +24,14 @@ def clean_build_dirs():
 
 def install_dependencies():
     """Instalar dependencias necesarias"""
-    print("📦 Instalando dependencias...")
+    print("[*] Instalando dependencias...")
     subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
     subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
     subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
 
 def create_spec_file():
     """Crear archivo .spec para PyInstaller"""
-    print("📝 Creando archivo .spec...")
+    print("[*] Creando archivo .spec...")
 
     spec_content = f"""# -*- mode: python ; coding: utf-8 -*-
 
@@ -104,30 +104,29 @@ exe = EXE(
 
 def build_executable():
     """Compilar ejecutable con PyInstaller"""
-    print("🔨 Compilando ejecutable...")
+    print("[*] Compilando ejecutable...")
 
     cmd = [
         "pyinstaller",
         "--clean",
-        "--onefile",
         f"{APP_NAME}.spec"
     ]
 
-    result = subprocess.run(cmd, check=True)
+    result = subprocess.run(cmd)
 
     if result.returncode == 0:
-        print("✅ Ejecutable compilado exitosamente")
+        print("[OK] Ejecutable compilado exitosamente")
     else:
-        print("❌ Error al compilar ejecutable")
+        print("[ERROR] Error al compilar ejecutable")
         sys.exit(1)
 
 def create_windows_installer():
     """Crear instalador NSIS para Windows"""
     if platform.system() != "Windows":
-        print("⚠️  Instalador NSIS solo disponible en Windows")
+        print("[WARN]  Instalador NSIS solo disponible en Windows")
         return
 
-    print("📦 Creando instalador Windows NSIS...")
+    print("[*] Creando instalador Windows NSIS...")
 
     nsis_script = f"""
 !define APP_NAME "{APP_NAME}"
@@ -196,17 +195,17 @@ SectionEnd
     # Intentar compilar con NSIS si está instalado
     try:
         subprocess.run(["makensis", "installer.nsi"], check=True)
-        print("✅ Instalador Windows creado")
+        print("[OK] Instalador Windows creado")
     except FileNotFoundError:
-        print("⚠️  NSIS no encontrado. Descarga desde: https://nsis.sourceforge.io/")
+        print("[WARN]  NSIS no encontrado. Descarga desde: https://nsis.sourceforge.io/")
 
 def create_linux_package():
     """Crear paquete .deb para Linux"""
     if platform.system() != "Linux":
-        print("⚠️  Paquete .deb solo disponible en Linux")
+        print("[WARN]  Paquete .deb solo disponible en Linux")
         return
 
-    print("📦 Creando paquete .deb...")
+    print("[*] Creando paquete .deb...")
 
     # Crear estructura de directorios
     pkg_dir = f"dist/{APP_NAME}-{VERSION}"
@@ -250,15 +249,15 @@ Categories=Office;TextEditor;
 
     # Construir paquete
     subprocess.run(["dpkg-deb", "--build", pkg_dir], check=True)
-    print("✅ Paquete .deb creado")
+    print("[OK] Paquete .deb creado")
 
 def create_macos_app():
     """Crear aplicación .app para macOS"""
     if platform.system() != "Darwin":
-        print("⚠️  Aplicación .app solo disponible en macOS")
+        print("[WARN]  Aplicación .app solo disponible en macOS")
         return
 
-    print("📦 Creando aplicación macOS...")
+    print("[*] Creando aplicación macOS...")
 
     app_dir = f"dist/{APP_NAME}.app/Contents"
     os.makedirs(f"{app_dir}/MacOS", exist_ok=True)
@@ -297,11 +296,11 @@ def create_macos_app():
         "-ov", "-format", "UDZO", dmg_name
     ], check=True)
 
-    print("✅ Aplicación macOS creada")
+    print("[OK] Aplicación macOS creada")
 
 def create_portable_zip():
     """Crear versión portable en ZIP"""
-    print("📦 Creando versión portable...")
+    print("[*] Creando versión portable...")
 
     system = platform.system()
     arch = platform.machine()
@@ -319,14 +318,14 @@ def create_portable_zip():
     shutil.make_archive(portable_dir, 'zip', portable_dir)
     shutil.rmtree(portable_dir)
 
-    print(f"✅ Versión portable creada: {portable_dir}.zip")
+    print(f"[OK] Versión portable creada: {portable_dir}.zip")
 
 def main():
     """Función principal"""
     print(f"""
-╔══════════════════════════════════════╗
-║  MarkdownViewer Build System v{VERSION}  ║
-╚══════════════════════════════════════╝
+=========================================
+  MarkdownViewer Build System v{VERSION}
+=========================================
 """)
 
     try:
@@ -348,9 +347,9 @@ def main():
         create_portable_zip()
 
         print(f"""
-╔════════════════════════════════════╗
-║  ✅ Build completado exitosamente  ║
-╚════════════════════════════════════╝
+======================================
+  Build completado exitosamente
+======================================
 
 Archivos generados en dist/:
 """)
@@ -362,7 +361,7 @@ Archivos generados en dist/:
             print(f"  - {item} ({size_mb:.2f} MB)")
 
     except Exception as e:
-        print(f"\n❌ Error durante el build: {e}")
+        print(f"\n[ERROR] Error durante el build: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
