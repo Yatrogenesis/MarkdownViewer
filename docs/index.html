@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkdownViewer - Editor y Visor Markdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .download-section {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .screenshot {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin: 30px 0;
+        }
+
+        .code-block {
+            background: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .github-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .github-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 MarkdownViewer</h1>
+            <p>Editor y Visor de Markdown con Exportación PDF, DOCX y HTML</p>
+        </header>
+
+        <div class="hero">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 30px;">
+                Aplicación de Escritorio Ligera y Poderosa
+            </h2>
+            <p style="text-align: center; font-size: 1.1em;">
+                Edita y visualiza documentos Markdown en tiempo real con una interfaz intuitiva.
+                Exporta a múltiples formatos sin dependencias externas.
+            </p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">✏️</div>
+                <h3>Editor Dual</h3>
+                <p>Vista dividida con editor de texto y preview en tiempo real, similar a Google Colab.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">📄</div>
+                <h3>Exportación Completa</h3>
+                <p>Exporta a PDF (nativo con ReportLab), DOCX (Word) y HTML manteniendo el formato.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Sin Dependencias</h3>
+                <p>No requiere wkhtmltopdf ni otras herramientas externas. Todo incluido en el ejecutable.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">⌨️</div>
+                <h3>Atajos de Teclado</h3>
+                <p>Ctrl+B (negrita), Ctrl+I (cursiva), Ctrl+K (código), F5 (alternar vista) y más.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">💾</div>
+                <h3>Auto-guardado</h3>
+                <p>Guarda automáticamente cada 60 segundos. Nunca pierdas tu trabajo.</p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Formato Completo</h3>
+                <p>Soporte completo para encabezados, listas, tablas, código, imágenes y enlaces.</p>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Descargar MarkdownViewer v1.0.0</h2>
+            <p style="margin-bottom: 30px;">Elige tu plataforma y descarga el ejecutable autocontenido</p>
+
+            <div class="download-buttons">
+                <a href="https://github.com/Yatrogenesis/MarkdownViewer/releases/download/v1.0.0/MarkdownViewer-1.0.0-Windows-Setup.exe" class="download-btn">
+                    🪟 Windows Installer
+                </a>
+                <a href="https://github.com/Yatrogenesis/MarkdownViewer/releases/download/v1.0.0/MarkdownViewer-1.0.0-Windows-x86_64-Portable.zip" class="download-btn">
+                    📦 Windows Portable
+                </a>
+                <a href="https://github.com/Yatrogenesis/MarkdownViewer/releases/download/v1.0.0/MarkdownViewer-1.0.0-Linux-amd64.deb" class="download-btn">
+                    🐧 Linux .deb
+                </a>
+                <a href="https://github.com/Yatrogenesis/MarkdownViewer/releases/download/v1.0.0/MarkdownViewer-1.0.0-macOS.dmg" class="download-btn">
+                    🍎 macOS .dmg
+                </a>
+            </div>
+        </div>
+
+        <div class="hero">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Instalación Rápida</h2>
+
+            <h3 style="margin-top: 30px;">Desde Código Fuente</h3>
+            <div class="code-block">
+git clone https://github.com/Yatrogenesis/MarkdownViewer.git
+cd MarkdownViewer
+pip install -r requirements.txt
+python MarkdownViewer.py
+            </div>
+
+            <h3 style="margin-top: 30px;">Desde Ejecutable</h3>
+            <p><strong>Windows:</strong> Ejecuta el instalador .exe o descomprime el .zip portable</p>
+            <p><strong>Linux:</strong> <code>sudo dpkg -i MarkdownViewer-1.0.0-Linux-amd64.deb</code></p>
+            <p><strong>macOS:</strong> Abre el .dmg y arrastra a Applications</p>
+        </div>
+
+        <div class="hero">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Características Principales</h2>
+
+            <h3>📝 Edición Markdown</h3>
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li>Soporte completo de sintaxis Markdown</li>
+                <li>Resaltado de sintaxis en bloques de código</li>
+                <li>Vista previa en tiempo real</li>
+                <li>Atajos de teclado para formato rápido</li>
+            </ul>
+
+            <h3>📤 Exportación</h3>
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li><strong>PDF:</strong> Exportación nativa con ReportLab (sin wkhtmltopdf)</li>
+                <li><strong>DOCX:</strong> Compatible con Microsoft Word</li>
+                <li><strong>HTML:</strong> Con estilos CSS incluidos</li>
+            </ul>
+
+            <h3>⚙️ Configuración</h3>
+            <ul style="margin-left: 20px;">
+                <li>Cambiar fuente del editor</li>
+                <li>Modos de vista: Dividida, Solo editor, Solo preview</li>
+                <li>Auto-guardado configurable</li>
+            </ul>
+        </div>
+
+        <div class="hero">
+            <h2 style="color: #667eea; margin-bottom: 20px;">Atajos de Teclado</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f6f8fa;">
+                    <th style="padding: 10px; border: 1px solid #e1e4e8; text-align: left;">Atajo</th>
+                    <th style="padding: 10px; border: 1px solid #e1e4e8; text-align: left;">Acción</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+N</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Nuevo archivo</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+O</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Abrir archivo</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+S</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Guardar</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+B</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Negrita</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+I</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Cursiva</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>Ctrl+K</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Código inline</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>F5</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Alternar edición/vista</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;"><code>F6</code></td>
+                    <td style="padding: 10px; border: 1px solid #e1e4e8;">Vista dividida</td>
+                </tr>
+            </table>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 MarkdownViewer - Licencia MIT</p>
+            <a href="https://github.com/Yatrogenesis/MarkdownViewer" class="github-link">
+                ⭐ Ver en GitHub
+            </a>
+        </footer>
+    </div>
+</body>
+</html>
