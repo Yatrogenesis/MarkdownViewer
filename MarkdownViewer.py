@@ -606,7 +606,7 @@ class MarkdownViewer(QMainWindow):
         ))
 
         styles.add(ParagraphStyle(
-            name='Code',
+            name='CustomCode',
             parent=styles['Code'],
             fontSize=9,
             fontName='Courier',
@@ -636,7 +636,7 @@ class MarkdownViewer(QMainWindow):
                 else:
                     # Finalizar bloque de código
                     code_text = '\n'.join(code_block_lines)
-                    story.append(Preformatted(code_text, styles['Code']))
+                    story.append(Preformatted(code_text, styles['CustomCode']))
                     story.append(Spacer(1, 12))
                     in_code_block = False
                 i += 1
