@@ -84,3 +84,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [GitHub Pages](https://yatrogenesis.github.io/MarkdownViewer/)
 - [Issues](https://github.com/Yatrogenesis/MarkdownViewer/issues)
 - [Releases](https://github.com/Yatrogenesis/MarkdownViewer/releases)
+
+## 1.0.1 - PDF export fix
+- Prefer Qt WebEngine printToPdf (faithful to preview).
+- Fallback to ReportLab when WebEngine is unavailable or fails.
+- Updated README to remove wkhtmltopdf guidance.
