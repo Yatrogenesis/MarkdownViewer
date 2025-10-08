@@ -542,7 +542,10 @@ class MarkdownViewer(QMainWindow):
         return True
 
     def export_to_pdf(self):
-        """Exportar a PDF usando ReportLab (nativo)"""
+        """Exportar a PDF.
+        Intenta primero imprimir el HTML del preview con Qt WebEngine (fiel a la vista),
+        y en caso de fallo recurre al exportador nativo con ReportLab.
+        """
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "Exportar a PDF",
@@ -550,15 +553,53 @@ class MarkdownViewer(QMainWindow):
             "Archivos PDF (*.pdf)"
         )
 
-        if file_path:
-            if not file_path.endswith('.pdf'):
-                file_path += '.pdf'
+        if not file_path:
+            return
+        if not file_path.lower().endswith('.pdf'):
+            file_path += '.pdf'
 
-            try:
-                self.export_to_pdf_native(file_path)
-                QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
-            except Exception as e:
-                QMessageBox.critical(self, "Error", f"Error al exportar PDF:\n{str(e)}")
+        # Asegurar que el preview esté actualizado
+        self.update_preview()
+
+        # Intento 1: WebEngine printToPdf (preferido)
+        try:
+            page = self.preview.page()
+
+            # Versión callback: escribe bytes en archivo al finalizar
+            def _on_pdf_ready(data: bytes):
+                try:
+                    with open(file_path, 'wb') as f:
+                        f.write(data)
+                    QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
+                except Exception as ex:
+                    QMessageBox.warning(self, "Aviso", f"Fallo al escribir PDF generado por WebEngine. Se intentará método alternativo.\n{ex}")
+                    try:
+                        self.export_to_pdf_native(file_path)
+                        QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
+                    except Exception as e2:
+                        QMessageBox.critical(self, "Error", f"Error al exportar PDF:\n{str(e2)}")
+
+            # Si está disponible el método con callback
+            if hasattr(page, 'printToPdf'):
+                try:
+                    # PyQt6 expone printToPdf(callback) o printToPdf(filePath, layout)
+                    page.printToPdf(_on_pdf_ready)
+                    return
+                except TypeError:
+                    # Fallback a la variante con ruta directa si existe
+                    page.printToPdf(file_path)
+                    QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
+                    return
+        except Exception:
+            # Seguir a nativo
+            pass
+
+        # Intento 2: Exportador nativo ReportLab
+        try:
+            self.export_to_pdf_native(file_path)
+            QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error al exportar PDF:\n{str(e)}")
 
     def export_to_pdf_native(self, file_path):
         """Exportar a PDF usando ReportLab (sin dependencias externas)"""
