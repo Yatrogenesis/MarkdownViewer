@@ -53,13 +53,7 @@ class MarkdownViewer(QMainWindow):
         # Layout principal
         main_layout = QVBoxLayout(central_widget)
 
-        # Crear menú
-        self.create_menu()
-
-        # Crear toolbar
-        self.create_toolbar()
-
-        # Splitter para editor y preview
+        # Splitter para editor y preview (crear antes de menú/toolbar)
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # Editor de texto
@@ -77,6 +71,10 @@ class MarkdownViewer(QMainWindow):
         self.splitter.setSizes([700, 700])
 
         main_layout.addWidget(self.splitter)
+
+        # Crear menú y toolbar después de instanciar editor/preview
+        self.create_menu()
+        self.create_toolbar()
 
         # Timer para actualización automática del preview
         self.update_timer = QTimer()
@@ -263,12 +261,19 @@ class MarkdownViewer(QMainWindow):
         toolbar.addWidget(h2_btn)
 
         bold_btn = QPushButton("B")
-        bold_btn.setFont(QFont("Arial", 10, QFont.Weight.Bold))
+        _bf = QFont("Arial", 10)
+        try:
+            _bf.setWeight(QFont.Weight.Bold)
+        except Exception:
+            _bf.setBold(True)
+        bold_btn.setFont(_bf)
         bold_btn.clicked.connect(lambda: self.insert_format("**", "**"))
         toolbar.addWidget(bold_btn)
 
         italic_btn = QPushButton("I")
-        italic_btn.setFont(QFont("Arial", 10, QFont.Weight.Normal, True))
+        _if = QFont("Arial", 10)
+        _if.setItalic(True)
+        italic_btn.setFont(_if)
         italic_btn.clicked.connect(lambda: self.insert_format("*", "*"))
         toolbar.addWidget(italic_btn)
 
@@ -530,12 +535,10 @@ class MarkdownViewer(QMainWindow):
                 self,
                 "Cambios sin guardar",
                 "¿Desea guardar los cambios antes de continuar?",
-                QMessageBox.StandardButton.Save |
-                QMessageBox.StandardButton.Discard |
-                QMessageBox.StandardButton.Cancel
+                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
             )
 
-            if reply == QMessageBox.StandardButton.Save:
+            if reply == QMessageBox.Save:
                 return self.save_file()
             elif reply == QMessageBox.StandardButton.Cancel:
                 return False
@@ -564,34 +567,13 @@ class MarkdownViewer(QMainWindow):
         # Intento 1: WebEngine printToPdf (preferido)
         try:
             page = self.preview.page()
-
-            # Versión callback: escribe bytes en archivo al finalizar
-            def _on_pdf_ready(data: bytes):
-                try:
-                    with open(file_path, 'wb') as f:
-                        f.write(data)
-                    QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
-                except Exception as ex:
-                    QMessageBox.warning(self, "Aviso", f"Fallo al escribir PDF generado por WebEngine. Se intentará método alternativo.\n{ex}")
-                    try:
-                        self.export_to_pdf_native(file_path)
-                        QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
-                    except Exception as e2:
-                        QMessageBox.critical(self, "Error", f"Error al exportar PDF:\n{str(e2)}")
-
-            # Si está disponible el método con callback
             if hasattr(page, 'printToPdf'):
-                try:
-                    # PyQt6 expone printToPdf(callback) o printToPdf(filePath, layout)
-                    page.printToPdf(_on_pdf_ready)
-                    return
-                except TypeError:
-                    # Fallback a la variante con ruta directa si existe
-                    page.printToPdf(file_path)
-                    QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
-                    return
-        except Exception:
-            # Seguir a nativo
+                page.printToPdf(file_path)
+                QMessageBox.information(self, "Éxito", f"PDF exportado a:\n{file_path}")
+                return
+        except Exception as e:
+            # Si falla, se registrará en la consola y se pasará al método nativo
+            print(f"La exportación con WebEngine falló, usando método nativo: {e}")
             pass
 
         # Intento 2: Exportador nativo ReportLab

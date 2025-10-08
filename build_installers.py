@@ -24,6 +24,9 @@ def clean_build_dirs():
 
 def install_dependencies():
     """Instalar dependencias necesarias"""
+    print("[*] Desinstalando versiones anteriores de Qt...")
+    subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "PyQt6", "PyQt6-WebEngine", "PyQt6-sip"], check=False)
+    print("[*] Instalando dependencias...")
     print("[*] Instalando dependencias...")
     subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
     subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
@@ -46,11 +49,11 @@ a = Analysis(
         ('LICENSE', '.'),
     ],
     hiddenimports=[
-        'PyQt6.QtCore',
-        'PyQt6.QtGui',
-        'PyQt6.QtWidgets',
-        'PyQt6.QtWebEngineWidgets',
-        'PyQt6.QtWebEngineCore',
+        'PySide6.QtCore',
+        'PySide6.QtGui',
+        'PySide6.QtWidgets',
+        'PySide6.QtWebEngineWidgets',
+        'PySide6.QtWebEngineCore',
         'markdown',
         'markdown.extensions.fenced_code',
         'markdown.extensions.tables',
@@ -65,7 +68,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={{}},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['PyQt6'],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
