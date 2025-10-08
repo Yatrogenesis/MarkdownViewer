@@ -32,9 +32,7 @@ Visor y editor de Markdown ligero con exportación a PDF, DOCX y HTML.
    pip install -r requirements.txt
    ```
 
-3. **Para exportación PDF** (opcional):
-   - Descargar e instalar [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)
-   - Agregar a PATH del sistema
+3. **Para exportación PDF fiel al preview**: asegúrate de tener instalado `PyQt6-WebEngine` (se instala con `pip install -r requirements.txt`). Si no está disponible, se usará el método nativo con ReportLab.
 
 ## 🎯 Uso
 
@@ -112,12 +110,7 @@ python MarkdownViewer.py
 
 ## 📄 Exportación
 
-### PDF
-1. Menú: **Archivo → Exportar → Exportar a PDF**
-2. Requiere **wkhtmltopdf** instalado
-3. Respeta encabezados, formato, tablas, código
-
-### DOCX
+### PDF\r\n1. Menú: **Archivo → Exportar → Exportar a PDF**\r\n2. Métodos de exportación:\r\n   - Preferente: Qt WebEngine `printToPdf` (fiel al preview HTML)\r\n   - Alternativo: nativo ReportLab (sin dependencias externas)\r\n3. Recomendado: usar PyQt6-WebEngine para preservar estilos del preview.\r\n\r\n### DOCX
 1. Menú: **Archivo → Exportar → Exportar a DOCX**
 2. Compatible con Microsoft Word
 3. Convierte encabezados a estilos Word
@@ -140,16 +133,7 @@ python MarkdownViewer.py
 
 ## 🔧 Solución de Problemas
 
-### Error al Exportar PDF
-**Problema**: "Error al exportar PDF... wkhtmltopdf"
-
-**Solución**:
-1. Descargar [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html)
-2. Instalar
-3. Agregar al PATH:
-   - Windows: Agregar `C:\Program Files\wkhtmltopdf\bin` a variables de entorno
-   - O especificar ruta en código:
-     ```python
+### Error al Exportar PDF\r\n**Problema**: Falla la exportación por WebEngine o no está instalado.\r\n\r\n**Solución**:\r\n1. Verifica que `PyQt6-WebEngine` esté instalado (reinstala `requirements.txt`).\r\n2. Si el método WebEngine falla, la aplicación usará automáticamente el exportador nativo ReportLab.\r\n3. Reintenta con un archivo de salida distinto si el PDF está bloqueado por otro proceso.\r\npython
      config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
      pdfkit.from_string(html, file_path, options=options, configuration=config)
      ```
@@ -228,4 +212,5 @@ MIT License - Uso libre
 - PyQt6 para la interfaz gráfica
 - Python-Markdown para parsing
 - python-docx para exportación Word
-- pdfkit para exportación PDF
+- ReportLab / Qt WebEngine para exportación PDF
+
